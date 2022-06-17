@@ -12,7 +12,7 @@ ARG KUBECTL_VERSION=1.24.0
 ARG YQ_VERSION="v4.25.2"
 ARG HELM_VERSION="v3.9.0"
 ARG DOCTL_VERSION=1.75.0
-ARG CLOUD_SDK_VERSION=388.0.0
+ARG CLOUD_SDK_VERSION=390.0.0
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ARG INSTALL_GCLOUD_COMPONENTS
 ENV TERRAFORM_VERSION=1.2.2
@@ -102,6 +102,7 @@ RUN apt-get update -qqy && apt-get install -qqy --no-install-recommends \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image && \
     gcloud --version && \
+    gcloud components install gke-gcloud-auth-plugin && \
     git config --system credential.'https://source.developers.google.com'.helper gcloud.sh
 
 USER $user_id
