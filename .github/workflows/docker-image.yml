@@ -21,4 +21,5 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
       run: docker build --build-arg user_id=502 -t cmdr:latest .
-    
+    - name: Push the Docker image
+      run: docker push grokbot/cmdr:latest

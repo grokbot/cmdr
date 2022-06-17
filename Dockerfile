@@ -115,7 +115,7 @@ RUN python3 -m venv $APP_ROOT \
  && chmod +x $APP_ROOT/src/.vault_pass \
 # install common ansible collections
  && ansible-galaxy collection install -c community.kubernetes community.general amazon.aws community.aws google.cloud community.digitalocean community.mysql community.docker \
- && git config --global credential.helper "/bin/bash $APP_ROOT/etc/credential-helper.sh"
+ && git config --global credential.helper "/bin/bash $APP_ROOT/bin/credential-helper"
 
 WORKDIR $HOME
 
