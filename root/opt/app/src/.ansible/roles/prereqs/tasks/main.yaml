@@ -1,0 +1,83 @@
+---
+- name: Determine if running in container
+  set_fact: 
+    container: "{{ lookup('env', 'container') }}"
+
+- name: Verify Ansible meets version requirements
+  assert:
+    that: "ansible_version.full is version_compare('2.10.0', '>=')"
+    fail_msg: "You must update Ansible to at least version 2.10.0 to use this playbook"
+    success_msg: "Ansible version of {{ ansible_version.full }} is >= 2.10.0"
+
+- name: Check required vars are set
+  assert:
+    that:
+      - item is defined
+    fail_msg: "{{ item }} must be set prereq role invocation"
+  with_items:
+    - cloud_env
+  no_log: true
+
+- name: Create and empty dict for env_vars
+  set_fact:
+    env_vars: {}
+
+- name: Append our env_checks ENV vars to our env_vars dict
+  set_fact:
+    env_vars: "{{ env_vars | combine( { item: lookup('env', item) } ) }}"
+  with_items: "{{ env_checks[cloud_env] }}"
+  when: item is defined
+
+- name: Check required ENV vars are set
+  assert:
+    that:
+      - item.value is defined
+      - item.value != ''
+    fail_msg: "{{ item.key }} must be set in your ENV"
+  with_dict: "{{ env_vars }}"
+  no_log: true
+
+- name: Override service account file path if service_account defined
+  set_fact:
+    env_vars: "{{ env_vars | combine(override_vars) }}"
+    service_account: "{{ service_account }}"
+    gcp_service_account_file: "{{ gcp_service_account_path }}/{{ service_account }}.json"
+  vars:
+    override_vars: 
+      GCP_SERVICE_ACCOUNT_FILE: "{{ gcp_service_account_path }}/{{ service_account }}.json"
+  when:
+    - cloud_env == 'gcp'
+    - service_account is defined
+
+- name: Check certain ansible variables are defined
+  assert:
+    that:
+      - item is defined
+      - "{{ item }} is not none"
+  with_items:
+    - ansible_ssh_private_key_file
+  when:
+    - ssh_tasks == 'true'
+
+- name: Check SSH key is present
+  stat:
+    path: "{{ ansible_ssh_private_key_file }}"
+  register: pk
+  when:
+    - ssh_tasks == 'true'
+
+- name: Verify SSH key exists and has appropriate permissions
+  assert:
+    that: pk.stat.exists
+    fail_msg: "SSH key is missing"
+    success_msg: "SSH key found successfully"
+  when:
+    - ssh_tasks == 'true'
+
+- name: Verify SSH key permissions are correct (0400)
+  assert:
+    that: "pk.stat.mode == '0400'"
+    fail_msg: "SSH key: {{ ansible_ssh_private_key_file }} has incorrect permissions ({{ pk.stat.mode }}). Should be 0400."
+    success_msg: "SSH key permissions are correct."
+  when:
+    - ssh_tasks == 'true'

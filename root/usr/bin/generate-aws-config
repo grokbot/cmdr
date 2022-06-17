@@ -1,0 +1,11 @@
+#!/bin/bash
+cat <<EOF > $APP_ROOT/src/.aws/config
+[default]
+region = $AWS_DEFAULT_REGION
+output = json
+
+EOF
+
+if [ "$DEBUG" != "" ]; then 
+  echo "using AWS region: $AWS_DEFAULT_REGION"
+fi

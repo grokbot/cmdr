@@ -1,0 +1,19 @@
+---
+
+- name: Prerequisite Checks (DO)
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - name: prereqs
+      vars:
+        cloud_env: do
+
+- name: DO tasks
+  hosts: localhost
+  gather_facts: true
+  environment: "{{ hostvars.localhost.env_vars}}"
+
+  tasks:
+    - name: Gather information about user account
+      community.digitalocean.digital_ocean_account_info:

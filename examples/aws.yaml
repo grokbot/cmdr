@@ -1,0 +1,24 @@
+---
+
+- name: Prerequisite Checks (AWS)
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - name: prereqs
+      vars:
+        cloud_env: aws
+
+- name: AWS tasks
+  hosts: localhost
+  gather_facts: true
+  environment: "{{ hostvars.localhost.env_vars}}"
+
+  tasks:
+    - name: Get the current caller identity information
+      amazon.aws.aws_caller_info:
+      register: caller_info
+
+    - name: set AWS facts
+      set_fact:
+        aws_account: "{{ caller_info.account }}"

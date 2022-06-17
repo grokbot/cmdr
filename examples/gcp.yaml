@@ -1,0 +1,21 @@
+---
+
+- name: Prerequisite Checks (GCP)
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - name: prereqs
+      vars:
+        cloud_env: gcp
+        gcp_service_account_path: ~/.config/gcloud/ # default
+        service_account: application_default_credentials # application_default_credentials.json
+
+- name: GCP tasks
+  hosts: localhost
+  gather_facts: true
+  environment: "{{ hostvars.localhost.env_vars}}"
+
+  tasks:
+    - name: activate service account
+      command: "gcloud auth activate-service-account --key-file {{ gcp_service_account_file }}"

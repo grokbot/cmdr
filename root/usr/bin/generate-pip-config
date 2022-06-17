@@ -1,0 +1,14 @@
+#!/bin/bash
+cat <<EOF > $APP_ROOT/etc/pip.conf
+[global]
+trusted-host = $PYPI_HOST
+timeout=60
+index-url = $PYPI_REGISTRY/simple
+index = $PYPI_REGISTRY/pypi
+
+EOF
+
+if [ "$DEBUG" != "" ]; then 
+  echo "using python registry: $PYPI_REGISTRY"
+  echo "using pip config file: $APP_ROOT/etc/pip.conf"
+fi
