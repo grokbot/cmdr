@@ -1,0 +1,2 @@
+---
+# shared variables between environments go here and are sym-linked to the `env`/group_vars/all directory

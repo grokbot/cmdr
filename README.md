@@ -20,7 +20,9 @@ from the ansible project directory:
 ```bash
 docker run \
     --env-file=</path-to-env-file/>.env \
-    -v ~/.ssh:/opt/app/src/.ssh \
+    -v $HOME/.ssh:/opt/app/src/.ssh \
+    -v $HOME/.kube:/opt/app/src/.kube \
+    -v $HOME/.config:/opt/app/src/.config \
     -v $PWD:/opt/app/src/ansible \
     -w /opt/app/src/ansible \
     cmdr:latest \
@@ -33,7 +35,8 @@ from the ansible project directory:
 docker run -it \
     --add-host host.docker.internal:host-gateway \
     --env-file=</path-to-env-file/>.env \
-    -v ~/.ssh:/opt/app/src/.ssh \
+    -v $HOME/.ssh:/opt/app/src/.ssh \
+    -v $HOME/.kube:/opt/app/src/.kube \
     -v $HOME/.config:/opt/app/src/.config \
     -v $PWD:/opt/app/src/ansible \
     -w /opt/app/src/ansible \
