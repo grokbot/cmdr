@@ -36,6 +36,7 @@ ENV APP_ROOT=$APP_ROOT \
     PYPI_HOST=$PYPI_HOST \
     PYPI_REGISTRY=https://$PYPI_HOST \
     PIP_CONFIG_FILE=$APP_ROOT/etc/pip.conf \
+    INSTALL_GCLOUD_COMPONENTS=google-cloud-sdk-gke-gcloud-auth-plugin \
     container=docker
 
 # - Enable the virtual python environment and default interactive and non-interactive 
@@ -102,7 +103,6 @@ RUN apt-get update -qqy && apt-get install -qqy --no-install-recommends \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image && \
     gcloud --version && \
-    gcloud components install gke-gcloud-auth-plugin && \
     git config --system credential.'https://source.developers.google.com'.helper gcloud.sh
 
 USER $user_id
